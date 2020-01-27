@@ -42,10 +42,31 @@ void Segment::calculateFeatures()
     M7_ = (M20_ * M02_ - std::pow(M11_, 2)) / std::pow(M00_, 4);
 }
 
-double Segment::isLetterCWithErrorPercent()
+bool Segment::isLetterC()
 {
-    return ((fabs(0.4 - M1_) / 0.4 ) +
-            (fabs(0.036 - M7_)) / 0.036) / 2;
+    return M1_ > 0.35 and M1_ < 0.53 and
+           M2_ < 0.05 and
+           M3_ > 0.001 and M3_ < 0.03 and
+           M4_ > 0.001 and M4_ < 0.02 and
+           M7_ > 0.02 and M7_ < 0.07;
+}
+
+bool Segment::isLetterI()
+{
+    return M1_ > 0.28 and M1_ < 0.7 and
+           M2_ > 0.06 and M2_ < 0.32 and
+           M3_ < 0.002 and
+           M4_ < 0.002 and
+           M7_ > 0.001 and M7_ < 0.01;
+}
+
+bool Segment::isLetterT()
+{
+    return M1_ > 0.3 and M1_ < 0.7 and
+           M2_ > 0.05 and M2_ < 0.35 and
+           M3_ > 0.002 and M3_ < 0.05 and
+           M4_ > 0.0005 and M4_ < 0.03 and
+           M7_ > 0.01 and M7_ < 0.019;
 }
 
 void Segment::printAllFeatures()

@@ -8,7 +8,6 @@
 #include <random>
 #include <utility>
 
-#include <opencv2/core/core.hpp>
 
 inline
 int normalizePixel(int value) {

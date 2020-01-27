@@ -20,7 +20,9 @@ public:
     void calculateFeatures();
     void printAllFeatures();
 
-    double isLetterCWithErrorPercent();
+    bool isLetterC();
+    bool isLetterI();
+    bool isLetterT();
 
     std::vector<cv::Point2i> pixels_;
     cv::Scalar color_;

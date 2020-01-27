@@ -134,7 +134,7 @@ void LogoRecognizer::inRange(const cv::Scalar &lower, const cv::Scalar &upper)
 Segment LogoRecognizer::floodFill(cv::Mat &I, int i, int j, const cv::Vec3b &new_color)
 {
     // I.at<cv::Vec3b>(Y, X) !!!
-    std::cout << "floodfilling for " << i << ", " << j  << " with color " << new_color << std::endl;
+//    std::cout << "floodfilling for " << i << ", " << j  << " with color " << new_color << std::endl;
     auto orig_col = I.at<cv::Vec3b>(i, j);
 
     std::vector<cv::Point2i> points;
@@ -189,8 +189,8 @@ void LogoRecognizer::floodFillAll(const cv::Vec3b &color_to_be_filled, int minim
                 else
                 {
                     // revert flood filling for objects that are not big enough
-                    std::cout << "Reverting floodfill because object size (" << seg.pixels_.size() <<
-                                 ") < minimal_object_area (" << minimal_object_area << ")." << std::endl;
+//                    std::cout << "Reverting floodfill because object size (" << seg.pixels_.size() <<
+//                                 ") < minimal_object_area (" << minimal_object_area << ")." << std::endl;
 
                     floodFill(flood_filled_im_, i, j, {0, 0, 0});
                 }
@@ -221,14 +221,34 @@ void LogoRecognizer::analyzeFeatures()
 {
     for (auto &segment : segments_)
     {
-        double inaccuracy = segment.isLetterCWithErrorPercent();
-
-        if (inaccuracy < 0.12)
+        if (segment.isLetterC())
         {
-            std::cout << "Segment qualified as an 'c' with inaccuracy of " << inaccuracy << "." << std::endl;
+            std::cout << "Segment qualified as an 'c'." << std::endl;
+            segment.printAllFeatures();
 
             cv::circle(flood_filled_im_, {static_cast<int>(segment.x_), static_cast<int>(segment.y_)}, 10,
                     {0, 0, 255}, 3);
+        }
+
+        if (segment.isLetterI())
+        {
+            std::cout << "Segment qualified as an 'i'." << std::endl;
+            segment.printAllFeatures();
+
+            cv::circle(flood_filled_im_, {static_cast<int>(segment.x_), static_cast<int>(segment.y_)}, 10,
+                       {0, 255, 255}, 3);
+        }
+
+//        std::cout << "\nAnalyzing segment..." << std::endl;
+//        segment.printAllFeatures();
+
+        if (segment.isLetterT())
+        {
+            std::cout << "Segment qualified as an 't'." << std::endl;
+            segment.printAllFeatures();
+
+            cv::circle(flood_filled_im_, {static_cast<int>(segment.x_), static_cast<int>(segment.y_)}, 10,
+                       {255, 0, 255}, 3);
         }
     }
 }
