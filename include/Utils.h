@@ -23,29 +23,6 @@ int normalizePixel(int value) {
 }
 
 inline
-bool isBlack(cv::Vec3b pix)
-{
-    return pix[0] == 0 && pix[1] == 0 && pix[2] == 0;
-}
-
-inline
-bool isWhite(cv::Vec3b pix)
-{
-    return pix[0] == 255 && pix[1] == 255 && pix[2] == 255;
-}
-
-inline
-bool areNearlyEqual(const cv::Vec3b &lhs, const cv::Vec3b &rhs, int offset = 5)
-{
-    return normalizePixel(lhs[0] - offset) <= normalizePixel(rhs[0]) and
-           normalizePixel(rhs[0]) <= normalizePixel(lhs[0] + offset) and
-           normalizePixel(lhs[1] - offset) <= normalizePixel(lhs[1]) and
-           normalizePixel(rhs[1]) <= normalizePixel(lhs[1] + offset) and
-           normalizePixel(lhs[2] - offset) <= normalizePixel(rhs[2]) and
-           normalizePixel(rhs[2]) <= normalizePixel(lhs[2] + offset);
-}
-
-inline
 cv::Vec3b getRandomColor()
 {
     std::random_device dev;

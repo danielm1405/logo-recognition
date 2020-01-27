@@ -76,12 +76,6 @@ bool Segment::isLetterT()
 
 void Segment::printAllFeatures()
 {
-//    std::cout << "\tm00: " << m00_ << std::endl;
-//    std::cout << "\tm10: " << m10_ << std::endl;
-//    std::cout << "\tm01: " << m01_ << std::endl;
-//    std::cout << "\tm11: " << m11_ << std::endl;
-//    std::cout << "\tm20: " << m20_ << std::endl;
-//    std::cout << "\tm02: " << m02_ << std::endl;
     std::cout << "\tM1: " << M1_ << std::endl;
     std::cout << "\tM2: " << M2_ << std::endl;
     std::cout << "\tM3: " << M3_ << std::endl;
