@@ -227,7 +227,9 @@ void LogoRecognizer::analyzeFeatures()
             segment.printAllFeatures();
 
             cv::circle(flood_filled_im_, {static_cast<int>(segment.x_), static_cast<int>(segment.y_)}, 10,
-                    {0, 0, 255}, 3);
+                    {0, 0, 255}, 1);
+
+            c_letters_.push_back(&segment);
         }
 
         if (segment.isLetterI())
@@ -236,7 +238,9 @@ void LogoRecognizer::analyzeFeatures()
             segment.printAllFeatures();
 
             cv::circle(flood_filled_im_, {static_cast<int>(segment.x_), static_cast<int>(segment.y_)}, 10,
-                       {0, 255, 255}, 3);
+                       {0, 255, 255}, 1);
+
+            i_letters_.push_back(&segment);
         }
 
 //        std::cout << "\nAnalyzing segment..." << std::endl;
@@ -248,7 +252,49 @@ void LogoRecognizer::analyzeFeatures()
             segment.printAllFeatures();
 
             cv::circle(flood_filled_im_, {static_cast<int>(segment.x_), static_cast<int>(segment.y_)}, 10,
-                       {255, 0, 255}, 3);
+                       {255, 0, 255}, 1);
+
+            t_letters_.push_back(&segment);
+        }
+
+        std::cout << "Found " << c_letters_.size() << " c's, " <<
+                                 i_letters_.size() << " i's, " <<
+                                 t_letters_.size() << " t's." << std::endl;
+    }
+}
+
+void LogoRecognizer::findLogos()
+{
+    for (auto & c_letter : c_letters_)
+    {
+        for (auto & i_letter : i_letters_)
+        {
+            if (areConsecutiveLetters(*c_letter, *i_letter))
+            {
+                std::cout << "CI found..." << std::endl;
+
+                for (auto & t_letter : t_letters_)
+                {
+                    if (areConsecutiveLetters(*i_letter, *t_letter))
+                    {
+                        std::cout << "CIT found..." << std::endl;
+
+                        for (auto & i_letter2 : i_letters_)
+                        {
+                            if (areConsecutiveLetters(*t_letter, *i_letter2))
+                            {
+                                std::cout << "CITI found!!!" << std::endl;
+
+                                std::vector<Segment> points{*c_letter, *i_letter, *t_letter, *i_letter2};
+                                auto box = getBox(points);
+
+                                cv::rectangle(flood_filled_im_, box.first, box.second,
+                                        {255, 0, 255}, 3);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

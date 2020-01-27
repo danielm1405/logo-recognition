@@ -11,6 +11,11 @@ void Segment::calculateFeatures()
         int i = point.x;
         int j = point.y;
 
+        max_x_ = std::max(max_x_, i);
+        min_x_ = std::min(min_x_, i);
+        max_y_ = std::max(max_y_, j);
+        min_y_ = std::min(min_y_, j);
+
         m00_++;
         m10_ += i;
         m01_ += j;

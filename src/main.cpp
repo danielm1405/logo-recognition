@@ -45,6 +45,9 @@ int main(int, char *[]) {
     // features analysis
     citi_recognizer.analyzeFeatures();
 
+    // decide where are logos
+    citi_recognizer.findLogos();
+
     // images display
     citi_recognizer.showAllAndWait();
 

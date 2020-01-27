@@ -29,6 +29,7 @@ public:
     void calculateFeatures();
     void printFeatures();
     void analyzeFeatures();
+    void findLogos();
     void showAllAndWait();
 
     cv::Mat original_im_;
@@ -39,6 +40,9 @@ public:
 
     std::vector<Segment> segments_;
 
+    std::vector<Segment*> c_letters_;
+    std::vector<Segment*> i_letters_;
+    std::vector<Segment*> t_letters_;
 private:
     Segment floodFill(cv::Mat &I, int i, int j, const cv::Vec3b &new_color);
 
