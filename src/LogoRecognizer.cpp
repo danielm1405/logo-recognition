@@ -11,20 +11,105 @@
 
 LogoRecognizer::LogoRecognizer(const std::string &path) {
     original_im_ = cv::imread(path);
+
+    if (original_im_.rows <= 0 or original_im_.cols <= 0)
+    {
+        throw std::runtime_error("Failed to load file.");
+    }
+
+    processed_im_ = original_im_.clone();
+}
+
+void LogoRecognizer::smooth() {
+    double new_value = 0;
+
+    cv::Mat_<cv::Vec3b> in = processed_im_;
+    cv::Mat_<cv::Vec3b> out(in.rows, in.cols, CV_8UC3);
+
+    for (int i = 1; i < in.rows - 1; ++i)
+    {
+        for (int j = 1; j < in.cols - 1; ++j)
+        {
+            for (int c = 0; c < in.channels(); ++c)
+            {
+                out.at<cv::Vec3b>(i, j)[c] = 0;
+                new_value = 0;
+
+                for (int k = -1; k < 2; ++k)
+                {
+                    for (int l = -1; l < 2; ++l)
+                    {
+                        new_value += (in.at<cv::Vec3b>(i + k, j + l)[c] * (SMOOTHING_KERNEL[k + 1][l + 1]));
+                    }
+                }
+
+                out.at<cv::Vec3b>(i, j)[c] = normalizePixel(static_cast<int>(new_value));
+            }
+        }
+    }
+
+    processed_im_ = out;
+}
+
+void LogoRecognizer::sharpen() {
+    double new_value = 0;
+
+    cv::Mat_<cv::Vec3b> in = processed_im_;
+    cv::Mat_<cv::Vec3b> out(in.rows, in.cols, CV_8UC3);
+
+    for (int i = 1; i < in.rows - 1; ++i)
+    {
+        for (int j = 1; j < in.cols - 1; ++j)
+        {
+            for (int c = 0; c < in.channels(); ++c)
+            {
+                out.at<cv::Vec3b>(i, j)[c] = 0;
+                new_value = 0;
+
+                for (int k = -1; k < 2; ++k)
+                {
+                    for (int l = -1; l < 2; ++l)
+                    {
+                        new_value += (in.at<cv::Vec3b>(i + k, j + l)[c] * (SHARPENING_KERNEL[k + 1][l + 1]));
+                    }
+                }
+
+                out.at<cv::Vec3b>(i, j)[c] = normalizePixel(static_cast<int>(new_value));
+            }
+        }
+    }
+
+    processed_im_ = out;
+}
+
+double LogoRecognizer::getMeanSaturation()
+{
+    double mean_saturation = 0;
+
+    for (int i = 0; i < processed_im_.rows; ++i)
+    {
+        for (int j = 0; j < processed_im_.cols; ++j)
+        {
+            mean_saturation += hsv_im_.at<cv::Vec3b>(i, j)[1];
+        }
+    }
+
+    mean_saturation /= (processed_im_.rows * processed_im_.cols);
+    std::cout << "Mean saturation = " << mean_saturation << std::endl;
+
+    return mean_saturation;
 }
 
 void LogoRecognizer::inRange(const cv::Scalar &lower, const cv::Scalar &upper)
 {
     cv::Mat_<cv::Vec3b> out{hsv_im_.rows, hsv_im_.cols, CV_8UC3};
 //    int max = 0;
-    double mean_saturation = 0;
     for (int i = 0; i < out.rows; ++i)
     {
         for (int j = 0; j < out.cols; ++j)
         {
             bool is_in_range = true;
 //            max= std::max(static_cast<int>(hsv_im_.at<cv::Vec3b>(i, j)[2]), max);
-            mean_saturation += hsv_im_.at<cv::Vec3b>(i, j)[1];
             for (int k = 0; k < 3; ++k)
             {
                 is_in_range &= hsv_im_.at<cv::Vec3b>(i, j)[k] <= upper[k];
@@ -42,8 +127,7 @@ void LogoRecognizer::inRange(const cv::Scalar &lower, const cv::Scalar &upper)
         }
     }
 //    std::cout << max << std::endl;
-    mean_saturation /= (out.rows * out.cols);
-    std::cout << mean_saturation << std::endl;
+
     thresholded_im_ = std::move(out);
 }
 
